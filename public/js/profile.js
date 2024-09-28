@@ -13,6 +13,11 @@ const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const storage = firebase.storage();
 
+let currentUser;
+let username = document.getElementById("profileName");
+let defaultProfileImage = './images/profile_default.png'
+
+let profilePic = document.getElementById("profileImg");
 function pickFile(event) {
   const file = event.target.files[0];
   var storageRef = storage.ref("profilePic");
@@ -25,7 +30,7 @@ function pickFile(event) {
       console.log("Upload is " + progress + "% done");
     },
     (error) => {
-      alert("Error uploading file: ", error);
+      alert(error.code);
       // Handle unsuccessful uploads
     },
     () => {
@@ -41,9 +46,11 @@ function pickFile(event) {
           })
           .then(() => {
             // Update successful
+            checkUser();
             // ...
           })
           .catch((error) => {
+            alert("Error updating profile: ", error);
             // An error occurred
             // ...
           });
@@ -55,13 +62,46 @@ function pickFile(event) {
 function checkUser() {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
+      currentUser = user.displayName;
+      username.textContent = currentUser
       console.log(user);
-      user.photoURL = downloadURL || "https://via.placeholder.com/150";
-
-      // ...
+      user.photoURL ? profilePic.style.backgroundImage = user.photoURL : profilePic.style.backgroundImage = `url(${defaultProfileImage})`;
     } else {
-      // User is signed out
-      // ...
+      window.location.href = "login.html";
     }
   });
+}
+
+checkUser();
+
+function displayLoader() {
+  document.body.style.background = "white";
+  document.body.innerHTML = `
+  <div class="container" id="loader">
+  	<div class="loader"></div>
+  	<div class="loader"></div>
+  	<div class="loader"></div>
+  </div>
+`;
+  document.getElementById("loader").style.display = "block";
+}
+
+function goToChatPage() {
+  displayLoader();
+  setTimeout(() => {
+    window.location.href = "chat.html";
+  }, 3000);
+}
+
+function logOut() {
+  displayLoader();
+  setTimeout(() => {
+    document.getElementById("loader").style.display = "none";
+    auth
+      .signOut()
+      .then(() => {})
+      .catch((error) => {
+        alert(error.message);
+      });
+  }, 3000);
 }

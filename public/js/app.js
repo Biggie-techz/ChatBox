@@ -152,24 +152,11 @@ function sendEmailVerification() {
 }
 
 function iHaveVerified() {
-  document.getElementById("form").innerHTML = `
-    <div class="spinner" id="loader">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>`;
-  document.getElementById("loader").style.display = "block";
+  displayLoader();
   setTimeout(() => {
     document.getElementById("loader").style.display = "none";
     window.location.href = "login.html";
-  }, 2000);
+  }, 3000);
 }
 
 submit.addEventListener("click", (event) => {
@@ -230,23 +217,21 @@ submit.addEventListener("click", (event) => {
 });
 
 document.getElementById("haveAnAccount").addEventListener("click", () => {
-  document.body.style.background = "white";
-  document.getElementById("form").innerHTML = `
-    <div class="spinner" id="loader">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>`;
-  document.getElementById("loader").style.display = "block";
+  displayLoader();
   setTimeout(() => {
     document.getElementById("loader").style.display = "block";
     window.location.href = "login.html";
-  }, 2000);
+  }, 3000);
 });
+
+function displayLoader() {
+  document.body.style.background = "white";
+  document.body.innerHTML = `
+  <div class="container" id="loader">
+  	<div class="loader"></div>
+  	<div class="loader"></div>
+  	<div class="loader"></div>
+  </div>
+`;
+  document.getElementById("loader").style.display = "block";
+}

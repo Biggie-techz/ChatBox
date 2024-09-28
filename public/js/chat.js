@@ -11,6 +11,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const db = firebase.database();
 let currentUser;
 
 auth.onAuthStateChanged((user) => {
@@ -43,29 +44,16 @@ auth.onAuthStateChanged((user) => {
 });
 
 function logOut() {
-  document.body.innerHTML = `
-    <div class="spinner" id="loader">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>`;
-  document.getElementById("loader").style.display = "block";
+  displayLoader();
   setTimeout(() => {
-    document.getElementById("loader").style.display = "block";
+    document.getElementById("loader").style.display = "none";
     auth
       .signOut()
       .then(() => {})
       .catch((error) => {
         alert(error.message);
       });
-  }, 2000);
+  }, 3000);
 }
 
 function sendMessage() {
@@ -79,11 +67,10 @@ function sendMessage() {
     sender: currentUser,
     message: mssgInput.value,
     date: formatDate(),
-    time: formatTime()
+    time: formatTime(),
   };
 
-  database
-    .ref("ChatDatabase")
+  db.ref("ChatDatabase")
     .push(messageData)
     .then(() => {
       // alert("Message sent successfully!");
@@ -125,8 +112,7 @@ console.log(formatTime());
 
 function getMessages() {
   // Listen for new messages in the database
-  database
-    .ref("ChatDatabase")
+  db.ref("ChatDatabase")
     .orderByChild("date")
     .on("value", (snapshot) => {
       messages.innerHTML = ""; // Clear previous messages
@@ -139,7 +125,9 @@ function getMessages() {
         <p class="username">${messageData.sender}</p>
         ${messageData.message}
         </div>
-        <div class="time">${messageData.time} </br>${messageData.date == formatDate() ? "" :  messageData.date}</div>
+        <div class="time">${messageData.time} </br>${
+          messageData.date == formatDate() ? "" : messageData.date
+        }</div>
         </div>`;
         document.querySelectorAll(".mssg").forEach((mssg) => {
           if (mssg.querySelector(".username").textContent === currentUser) {
@@ -156,21 +144,20 @@ function getMessages() {
 }
 
 function goToProfile() {
-  document.body.style.background = "white";
-  document.body.innerHTML = `
-      <div class="spinner" id="loader">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>`;
+  displayLoader();
   setTimeout(() => {
     window.location.href = "profile.html";
-  }, 2000);
+  }, 3000);
+}
+
+function displayLoader() {
+  document.body.style.background = "white";
+  document.body.innerHTML = `
+  <div class="container" id="loader">
+  	<div class="loader"></div>
+  	<div class="loader"></div>
+  	<div class="loader"></div>
+  </div>
+`;
+  document.getElementById("loader").style.display = "block";
 }

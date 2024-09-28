@@ -6,52 +6,124 @@
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
-.spinner {
-  display: block;
+/* LOADER */
+/* From Uiverse.io by Nawsome */
+.loader {
   position: absolute;
-  bottom: 50%;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  z-index: 10;
+  width: 160px;
+  height: 100px;
+  margin-left: -80px;
+  margin-top: -50px;
+  border-radius: 5px;
+  background: #1e3f57;
+  animation: dot1_ 3s cubic-bezier(0.55, 0.3, 0.24, 0.99) infinite;
+}
+
+.loader:nth-child(2) {
+  z-index: 11;
+  width: 150px;
+  height: 90px;
+  margin-top: -45px;
+  margin-left: -75px;
+  border-radius: 3px;
+  background: #3c517d;
+  animation-name: dot2_;
+}
+
+.loader:nth-child(3) {
+  z-index: 12;
   width: 40px;
-  height: 40px;
+  height: 20px;
+  margin-top: 50px;
+  margin-left: -20px;
+  border-radius: 0 0 5px 5px;
+  background: #6bb2cd;
+  animation-name: dot3_;
 }
 
-.spinner div {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: var(--primary-color);
-  border-radius: 50%;
-  transform: scale(1);
-  animation: spinner-animation 1s infinite ease-in-out;
-}
-
-.spinner div:nth-child(1) {
-  animation-delay: -0.4s;
-}
-
-.spinner div:nth-child(2) {
-  animation-delay: -0.2s;
-}
-
-.spinner div:nth-child(3) {
-  animation-delay: 0s;
-}
-
-@keyframes spinner-animation {
-  0%,
-  100% {
-    transform: scale(0);
+@keyframes dot1_ {
+  3%,
+  97% {
+    width: 160px;
+    height: 100px;
+    margin-top: -50px;
+    margin-left: -80px;
   }
-  50% {
-    transform: scale(1);
+
+  30%,
+  36% {
+    width: 80px;
+    height: 120px;
+    margin-top: -60px;
+    margin-left: -40px;
+  }
+
+  63%,
+  69% {
+    width: 40px;
+    height: 80px;
+    margin-top: -40px;
+    margin-left: -20px;
   }
 }
 
+@keyframes dot2_ {
+  3%,
+  97% {
+    height: 90px;
+    width: 150px;
+    margin-left: -75px;
+    margin-top: -45px;
+  }
 
+  30%,
+  36% {
+    width: 70px;
+    height: 96px;
+    margin-left: -35px;
+    margin-top: -48px;
+  }
 
+  63%,
+  69% {
+    width: 32px;
+    height: 60px;
+    margin-left: -16px;
+    margin-top: -30px;
+  }
+}
 
+@keyframes dot3_ {
+  3%,
+  97% {
+    height: 20px;
+    width: 40px;
+    margin-left: -20px;
+    margin-top: 50px;
+  }
 
+  30%,
+  36% {
+    width: 8px;
+    height: 8px;
+    margin-left: -5px;
+    margin-top: 49px;
+    border-radius: 8px;
+  }
+
+  63%,
+  69% {
+    width: 16px;
+    height: 4px;
+    margin-left: -8px;
+    margin-top: -37px;
+    border-radius: 10px;
+  }
+}
+/* END OF SPINNER */
 
 body {
   height: 100vh;
@@ -77,6 +149,7 @@ body {
   overflow: hidden;
 }
 
+/* HEADER */
 #header {
   width: 100%;
   background-color: #333;
@@ -110,6 +183,7 @@ body {
   scale: 1.2;
 }
 
+/* MESSAGE BODY */
 #mssgBody {
   height: 100%;
   width: 100%;
@@ -139,6 +213,7 @@ body {
   gap: 10px;
 }
 
+/* SENDER STYLING */
 .sender {
   align-self: flex-end;
   flex-direction: row-reverse;
@@ -181,6 +256,7 @@ body {
   margin-bottom: 5px;
 }
 
+/* INPUT SECTION */
 #inputSection {
   padding-inline: 10px;
   width: 100%;
@@ -222,6 +298,7 @@ body {
   background-color: #444;
 }
 
+/* MEDIA QUERIES */
 @media (width <=1024px) {
   #wrapper {
     width: 100%;

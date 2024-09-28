@@ -41,23 +41,10 @@ function sendEmailVerification() {
 }
 
 function iHaveVerified() {
-  document.body.innerHTML = `
-    <div class="spinner" id="loader">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>`;
-  document.getElementById("loader").style.display = "block";
+  displayLoader();
   setTimeout(() => {
-    window.location.href = "login.html"
-  }, 2000);
+    window.location.href = "login.html";
+  }, 3000);
 }
 
 submit.addEventListener("click", (event) => {
@@ -76,25 +63,11 @@ submit.addEventListener("click", (event) => {
     .then((userCredential) => {
       var user = userCredential.user;
       if (auth.currentUser.emailVerified) {
-        document.body.style.backgroundColor = "#fff";
-        document.body.innerHTML = `
-        <div class="spinner" id="loader">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>`;
-        document.getElementById("loader").style.display = "block";
+        displayLoader();
         setTimeout(() => {
           document.getElementById("loader").style.display = "none";
           handleLoginSuccess();
-        }, 2000);
+        }, 3000);
       } else {
         sendEmailVerification();
       }
@@ -114,25 +87,11 @@ submit.addEventListener("click", (event) => {
 });
 
 document.getElementById("dontHaveAnAccount").addEventListener("click", () => {
-  document.body.style.background = "white";
-  document.body.innerHTML = `
-    <div class="spinner" id="loader">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>`;
-  document.getElementById("loader").style.display = "block";
+  displayLoader();
   setTimeout(() => {
     document.getElementById("loader").style.display = "block";
     window.location.href = "signup.html";
-  }, 2000);
+  }, 3000);
 });
 
 // Functions
@@ -167,6 +126,18 @@ function displayLoadingSpinner() {
   submit.innerHTML = `<div class="spinner-border" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>`;
+}
+
+function displayLoader() {
+  document.body.style.background = "white";
+  document.body.innerHTML = `
+  <div class="container" id="loader">
+  	<div class="loader"></div>
+  	<div class="loader"></div>
+  	<div class="loader"></div>
+  </div>
+`;
+  document.getElementById("loader").style.display = "block";
 }
 
 function clearErrorMessage() {
