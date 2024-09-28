@@ -13,7 +13,7 @@ const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const storage = firebase.storage();
 
-function uploadFile(event) {
+function pickFile(event) {
   const file = event.target.files[0];
   var storageRef = storage.ref("profilePic");
   var uploadTask = storageRef.put(file);

@@ -164,6 +164,7 @@ body {
   align-self: flex-end;
   position: sticky;
   bottom: 50%;
+  text-wrap: nowrap;
 }
 
 .mssg .message_content {

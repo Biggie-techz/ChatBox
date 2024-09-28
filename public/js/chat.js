@@ -11,7 +11,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const database = firebase.database();
 let currentUser;
 
 auth.onAuthStateChanged((user) => {
@@ -79,7 +78,8 @@ function sendMessage() {
   const messageData = {
     sender: currentUser,
     message: mssgInput.value,
-    time: new Date().toLocaleTimeString(),
+    date: formatDate(),
+    time: formatTime()
   };
 
   database
@@ -94,11 +94,40 @@ function sendMessage() {
     });
 }
 
+function formatTime() {
+  const now = new Date();
+
+  // Get hours and format in 12-hour AM/PM
+  let hours = now.getHours();
+  const minutes = now.getMinutes().toString().padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+
+  // Format time as HH:MM:SS AM/PM
+  return `${hours}:${minutes} ${ampm}`;
+}
+
+function formatDate() {
+  const now = new Date();
+
+  // Get date in MM/DD/YYYY format
+  const month = (now.getMonth() + 1).toString().padStart(2, "0"); // Months are zero-indexed
+  const day = now.getDate().toString().padStart(2, "0");
+  const year = now.getFullYear();
+
+  return `${month}/${day}/${year}`;
+}
+
+console.log(formatDate());
+
+console.log(formatTime());
+
 function getMessages() {
   // Listen for new messages in the database
   database
     .ref("ChatDatabase")
-    .orderByChild("time")
+    .orderByChild("date")
     .on("value", (snapshot) => {
       messages.innerHTML = ""; // Clear previous messages
       snapshot.forEach((childSnapshot) => {
@@ -110,7 +139,7 @@ function getMessages() {
         <p class="username">${messageData.sender}</p>
         ${messageData.message}
         </div>
-        <div class="time">${messageData.time}</div>
+        <div class="time">${messageData.time} </br>${messageData.date == formatDate() ? "" :  messageData.date}</div>
         </div>`;
         document.querySelectorAll(".mssg").forEach((mssg) => {
           if (mssg.querySelector(".username").textContent === currentUser) {

@@ -5,16 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile</title>
 
+
+    <link rel="stylesheet" href="./css/profile.css">
+
+    <!-- firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-storage-compat.js"></script>
+
+    <!-- font awesome -->
+    <script
+      src="https://kit.fontawesome.com/20c0ef93e7.js"
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
-    <div id="div"></div>
-    <img src="" width="100px" height="100px" alt="" />
-    <input type="file" class="type" onchange="uploadFile(event)" />
+    <div class="containerr" id="container">
+      <!-- Navbar -->
+      <div class="navbar">
+        <a href="../HTML/dashboard.html" class="logo">Chat<span>Box</span></a>
+        <ul class="mainNav">
+          <li><i class="fa-regular fa-user" onclick="homepage()"></i></li>
+          <li><i class="fa-solid fa-arrow-right-from-bracket" id="logOut" onclick="logout()"></i></li>
+        </ul>
+      </div>
 
+      <!-- Hero Section -->
+      <div class="hero" id="hero">
+        <!-- Profile Picture -->
+        <div class="profile_pic" id="profileImg">
+          <div id="editProfileImgBtn">
+            <label
+              for="profileSelector"
+              class="fa-solid fa-pen-to-square"
+            ></label>
+            <input
+              type="file"
+              id="profileSelector"
+              onchange="pickFile(event)"
+            />
+          </div>
+        </div>
+
+        <!-- Username -->
+        <div class="username">
+          <span id="profileName">Username</span>
+          <button id="editUsernameBtn" onclick="editUser()">
+            <i class="fa-solid fa-pen-to-square"></i>
+          </button>
+        </div>
+      </div>
+
+    <!-- Edit User Modal -->
+    <div class="editUser" id="editUserName"></div>
     <script src="./js/profile.js"></script>
   </body>
 </html>
