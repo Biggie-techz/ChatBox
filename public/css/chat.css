@@ -190,6 +190,8 @@ body {
   display: flex;
   flex-direction: column;
   padding: 10px 20px;
+  padding-bottom: 40px;
+  transition: 0.5s;
 }
 
 #messages {
@@ -198,12 +200,15 @@ body {
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
+  scroll-behavior: smooth;
 }
 
 #messages::-webkit-scrollbar {
   display: none;
 }
+
 .mssg {
+  position: relative;
   max-width: 55%;
   padding: 10px;
   border-radius: 5px;
@@ -211,21 +216,14 @@ body {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-}
-
-/* SENDER STYLING */
-.sender {
-  align-self: flex-end;
-  flex-direction: row-reverse;
-}
-
-.sender .message_content .username {
-  display: none;
+  overflow-wrap: break-word;
+  cursor: default;
 }
 
 .mssg img {
   width: 40px;
-  height: 40px;
+  border: 1px solid #444;
+  aspect-ratio: 1;
   border-radius: 50%;
   object-fit: cover;
   position: sticky;
@@ -246,6 +244,8 @@ body {
   display: flex;
   flex-direction: column;
   background-color: #fff;
+  word-break: break-all;
+  word-wrap: break-word;
   padding: 10px;
   border-radius: 5px;
 }
@@ -254,6 +254,61 @@ body {
   font-weight: 700;
   font-size: 0.75rem;
   margin-bottom: 5px;
+}
+
+/* SENDER STYLING */
+.sender {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.sender .message_content .username {
+  display: none;
+}
+
+/* EDIT AND DELETE OPTION */
+.options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 15px;
+  width: 100px;
+  background-color: #b3b3b3;
+  border-radius: 12px;
+  position: absolute;
+  left: -20%;
+  bottom: -100%;
+  z-index: 999;
+}
+
+.options ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 12px;
+  left: -40%;
+  bottom: 0%;
+}
+
+.options ul,
+.options ul li {
+  width: 100%;
+}
+
+.options ul li {
+  list-style: none;
+  text-align: center;
+  padding: 5px;
+  border-radius: 12px;
+  transition: 0.3s;
+  border-bottom: 1px solid #444;
+  cursor: pointer;
+}
+
+.options ul li:hover {
+  background-color: #ddd;
 }
 
 /* INPUT SECTION */
@@ -281,10 +336,11 @@ body {
   border-radius: 5px;
 }
 
-#inputSection i {
+#inputSection button {
   display: flex;
   align-items: center;
   justify-content: center;
+  border: none;
   aspect-ratio: 1;
   height: 100%;
   border-radius: 50%;

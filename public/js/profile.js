@@ -11,49 +11,46 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+console.log(auth);
+
 const storage = firebase.storage();
 
-let currentUser;
-let username = document.getElementById("profileName");
-let defaultProfileImage = './images/profile_default.png'
+const username = document.getElementById("profileName");
+const defaultProfileImage = './images/profile_default.png';
+const profileImg = document.getElementById("profileImg");
 
-let profilePic = document.getElementById("profileImg");
 function pickFile(event) {
   const file = event.target.files[0];
-  var storageRef = storage.ref("profilePic");
-  var uploadTask = storageRef.put(file);
+  const storageRef = storage.ref(`${auth.currentUser.email}`);
+  const uploadTask = storageRef.put(file);
+  
   uploadTask.on(
     "state_changed",
     (snapshot) => {
-      console.log(snapshot);
-      var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
       console.log("Upload is " + progress + "% done");
     },
     (error) => {
-      alert(error.code);
-      // Handle unsuccessful uploads
+      alert("Upload failed: " + error.message);
+      console.log(error);
     },
     () => {
-      // Handle successful uploads on complete
-      // For instance, get the download URL: https://firebasestorage.googleapis.com/...
       uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-        console.log("File available at", downloadURL);
-        const user = firebase.auth().currentUser;
+        const user = auth.currentUser;
+        console.log(downloadURL);
+        
+        console.log(auth.currentUser.photoURL);
 
-        user
-          .updateProfile({
-            photoURL: downloadURL,
-          })
-          .then(() => {
-            // Update successful
-            checkUser();
-            // ...
-          })
-          .catch((error) => {
-            alert("Error updating profile: ", error);
-            // An error occurred
-            // ...
-          });
+        user.updateProfile({
+          photoURL: downloadURL
+        }).then(() => {
+          alert("Profile updated successfully");
+          console.log(auth.currentUser.photoURL);
+          checkUser();
+        }).catch((error) => {
+          alert("Error updating profile: " + error.message);
+          console.log(error);
+        });
       });
     }
   );
@@ -62,10 +59,9 @@ function pickFile(event) {
 function checkUser() {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-      currentUser = user.displayName;
-      username.textContent = currentUser
-      console.log(user);
-      user.photoURL ? profilePic.style.backgroundImage = user.photoURL : profilePic.style.backgroundImage = `url(${defaultProfileImage})`;
+      const currentUser = user.displayName;
+      username.textContent = currentUser;
+      profileImg.style.backgroundImage = user.photoURL ? `url(${user.photoURL})` : `url(${defaultProfileImage})`;
     } else {
       window.location.href = "login.html";
     }
@@ -77,12 +73,12 @@ checkUser();
 function displayLoader() {
   document.body.style.background = "white";
   document.body.innerHTML = `
-  <div class="container" id="loader">
-  	<div class="loader"></div>
-  	<div class="loader"></div>
-  	<div class="loader"></div>
-  </div>
-`;
+    <div class="container" id="loader">
+      <div class="loader"></div>
+      <div class="loader"></div>
+      <div class="loader"></div>
+    </div>
+  `;
   document.getElementById("loader").style.display = "block";
 }
 
@@ -95,13 +91,10 @@ function goToChatPage() {
 
 function logOut() {
   displayLoader();
-  setTimeout(() => {
+  auth.signOut().then(() => {
     document.getElementById("loader").style.display = "none";
-    auth
-      .signOut()
-      .then(() => {})
-      .catch((error) => {
-        alert(error.message);
-      });
-  }, 3000);
+    window.location.href = "login.html"; // Redirect after sign-out
+  }).catch((error) => {
+    alert(error.message);
+  });
 }

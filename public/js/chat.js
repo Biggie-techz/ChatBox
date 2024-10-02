@@ -13,14 +13,17 @@ const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 let currentUser;
+let currentUserName;
+let index = 0;
 
 auth.onAuthStateChanged((user) => {
   if (user) {
-    currentUser = user.displayName;
-    document.body.innerHTML = `
+    currentUser = auth.currentUser;
+    currentUserName = currentUser.displayName;
+    document.body.innerHTML = ` 
       <section id="wrapper">
         <div id="header">
-          <h4>Current User: ${currentUser}</h4>
+          <h4>Current User: ${currentUserName}</h4>
           <i class="fa-regular fa-user" onclick="goToProfile()"></i>
           <i class="fa-solid fa-arrow-right-from-bracket" onclick="logOut()"></i>
         </div>
@@ -32,7 +35,7 @@ auth.onAuthStateChanged((user) => {
           <div id="inputSection">
             <!-- message input and send button -->
             <input type="text" id="mssgInput" />
-            <i class="fa-regular fa-paper-plane" id="send" onclick="sendMessage()"></i>
+            <button class="btn" id="send" onclick="sendMessage()"><i class="fa-regular fa-paper-plane"></i></button>
           </div>
         </div>
       </section>`;
@@ -63,17 +66,17 @@ function sendMessage() {
   }
 
   // Push message to Realtime Database
-  const messageData = {
-    sender: currentUser,
-    message: mssgInput.value,
-    date: formatDate(),
-    time: formatTime(),
-  };
-
-  db.ref("ChatDatabase")
-    .push(messageData)
+  db.ref(`chat/${chatIndex}`)
+    .set({
+      sender: currentUserName,
+      message: mssgInput.value,
+      date: formatDate(),
+      time: formatTime(),
+      profilePic: currentUser.photoURL
+        ? currentUser.photoURL
+        : "./images/profile_default.png",
+    })
     .then(() => {
-      // alert("Message sent successfully!");
       mssgInput.value = ""; // Clear input field after sending
     })
     .catch((error) => {
@@ -111,27 +114,52 @@ console.log(formatDate());
 console.log(formatTime());
 
 function getMessages() {
-  // Listen for new messages in the database
-  db.ref("ChatDatabase")
+  db.ref("chat")
     .orderByChild("date")
     .on("value", (snapshot) => {
-      messages.innerHTML = ""; // Clear previous messages
-      snapshot.forEach((childSnapshot) => {
-        const messageData = childSnapshot.val();
+      const data = snapshot.val() || [];
+      chatIndex = data.length;
+      console.log(data);
+      data.forEach((data) => {
+        index++;
+        data.id = index;
+      });
+      messages.innerHTML = ""; // Clear previous 55messages
+      data.forEach(({ sender, message, date, time, profilePic, id }) => {
         messages.innerHTML += `
         <div class="mssg">
-        <img src="./images/profile_default.png" alt="" />
-        <div class="message_content">
-        <p class="username">${messageData.sender}</p>
-        ${messageData.message}
-        </div>
-        <div class="time">${messageData.time} </br>${
-          messageData.date == formatDate() ? "" : messageData.date
+          <img src="${profilePic}" alt="" />
+          <div class="message_content">
+            <p class="username">${sender}</p>
+            ${message}
+          </div>
+          <div class="time">${time} </br>${
+          date == formatDate() ? "" : date
         }</div>
         </div>`;
         document.querySelectorAll(".mssg").forEach((mssg) => {
-          if (mssg.querySelector(".username").textContent === currentUser) {
+          if (mssg.querySelector(".username").textContent === currentUserName) {
             mssg.classList.add("sender");
+            let options = mssg.querySelector(".time");
+
+            mssg.addEventListener("click", () => {
+              options.classList.add("options");
+              options.innerHTML = ` 
+                <ul>
+                <li onclick="editMessage(${id}, '${message}')">Edit</li>
+                <li onclick="deleteMessage()">Delete</li>
+                </ul>`;
+              mssg.style.zIndex = 1000;
+              document.getElementById("mssgBody").style.backgroundColor =
+                "rgba(0, 0, 0, 0.5)";
+            });
+            mssg.addEventListener("mouseleave", () => {
+              document.getElementById("mssgBody").style.backgroundColor =
+                "transparent";
+              options.innerHTML = `${time}`;
+              options.classList.remove("options");
+              mssg.style.zIndex = 1;
+            });
           } else {
             mssg.classList.add("received");
           }
@@ -143,6 +171,21 @@ function getMessages() {
     });
 }
 
+getMessages();
+
+function editMessage(id, message) {
+  const mssgInput = document.getElementById("mssgInput");
+  mssgInput.value = message;
+  db.ref(`chat/${id}`).update({
+    message: mssgInput.value
+  }).then(() => {
+    mssgInput.value = ""; // Clear input field after sending
+  })
+  .catch((error) => {
+    alert("Error sending message: " + error.message);
+  });
+}
+
 function goToProfile() {
   displayLoader();
   setTimeout(() => {
@@ -152,12 +195,11 @@ function goToProfile() {
 
 function displayLoader() {
   document.body.style.background = "white";
-  document.body.innerHTML = `
+  document.body.innerHTML = ` 
   <div class="container" id="loader">
   	<div class="loader"></div>
   	<div class="loader"></div>
   	<div class="loader"></div>
-  </div>
-`;
+  </div>`;
   document.getElementById("loader").style.display = "block";
 }
